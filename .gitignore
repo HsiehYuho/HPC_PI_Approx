@@ -36,6 +36,8 @@
 *.x86_64
 *.hex
 
+prog1
+
 # Debug files
 *.dSYM/
 *.su
