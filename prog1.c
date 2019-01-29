@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
     if(rank == 0){
         if(argc != 3){
             printf("Please pass 2 args: number of darts (N) and number of rounds (R) \n");
-            return 0;
+            return 1;
         }
 
         char *p1, *p2;
@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
         if (errno != 0 || *p1 != '\0' || *p2 != '\0' 
                 || N_long > INT_MAX || R_long > INT_MAX) {
             printf("Please pass in two valid numbers \n");
-            return 0;
+            return 1;
         } else {
             // No error
             N = N_long;
