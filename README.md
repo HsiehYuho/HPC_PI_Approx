@@ -20,14 +20,15 @@ Note: please install MPI beforehand.
 ```
 cd HPC_PI_Approx  
 make
-make run p=2 n=100 r=2
+make run p=2 n=5000000 r=2
 
 // Output:
-Approx PI: X.XXXXXX
+N=500000, R=2, P=2, PI=X.XXXXXX
+Time=XXX.XXXXXX
 
 ```
 
 The example command is equivalent
 ```
-mpirun -np 2 ./100 2
+mpirun -np 2 ./prog1 5000000 2
 ```

@@ -16,9 +16,6 @@ int dboard(int n);
 // Gen random number between 0 and 1
 double gen_random(void);
 
-// Create output file
-void write_file(int N, int R, int size, double approx_pi, double time);
-
 int main(int argc, char** argv) {
 
     // Parallel
@@ -27,10 +24,6 @@ int main(int argc, char** argv) {
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
-
-    // Timer start
-    MPI_Barrier(MPI_COMM_WORLD); // ensure all nodes ready to proceed before starting timer
-    double start = MPI_Wtime();
 
     int N = 0, R = 0;       // N is the number of darts simulated per round, R is number of round
     int collective_m = 0;   // Used by master, to collect sum of m from other processors each iteration
@@ -69,6 +62,9 @@ int main(int argc, char** argv) {
     MPI_Bcast(&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&R, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Barrier(MPI_COMM_WORLD);
+	
+	// Timer start
+    double start = MPI_Wtime();
 
     // N may not be divisible to p, hence + 1 if rank is samller than N % p
     int num_iter = N / size;
@@ -90,8 +86,7 @@ int main(int argc, char** argv) {
     // Compute PI 
     if(rank == 0){
         double avg_m = (double)global_m / R; 
-        approx_pi = 2.0 * N / avg_m;
-        printf("Approx PI: %.6f \n", approx_pi);
+        approx_pi = 2.0 * N / avg_m;		
     }
 
     // End timer
@@ -101,8 +96,7 @@ int main(int argc, char** argv) {
 
     // Write output to file
     if(rank == 0) {
-    	printf("Time: %lf\n", end-start);
-    	write_file(N, R, size, approx_pi, end-start);
+    	printf("N=%d, R=%d, P=%d, PI=%lf\nTime=%lf\n", N, R, size, approx_pi, end-start);
     }
 
     return 0;
@@ -130,13 +124,4 @@ int dboard(int n){
 
 double gen_random(){
     return (double) rand()/ ((double)RAND_MAX + 1); // +1 to exclude 1.0 edge case (on circumf of circle)
-}
-
-void write_file(int N, int R, int size, double approx_pi, double time) {
-	char fname[50];
-	sprintf(fname, "output_%d_%d_%d.txt", N, R, size);
-	FILE *f = fopen(fname, "w");
-	fprintf(f, "N=%d, R=%d, P=%d, PI=%lf\nTime=%lf", N, R, size, approx_pi, time);
-	fclose(f);
-	return;
 }
