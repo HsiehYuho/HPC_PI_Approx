@@ -1,6 +1,6 @@
 # HPC_PI_Approx
 
-## Descrption
+## Description
 Introduction to High Performance Computing assignment 1, calculating pi approximation using MPI and dartboard algorithm.
 
 ## Prerequisite
@@ -12,23 +12,33 @@ MPI
 ## Run
 
 1. Git clone the repo.
-2. Using makefile to compile .c file(s)
-3. Run the exmaple command (p=NUM_OF_PROCESSOR n=NUM_OF_DARTS r=NUM_OF_ITERATION)
-4. You should be able to see the output.
-Note: please install MPI beforehand. 
+2. Load mvapich
+Note: please install MPI beforehand.
+3. Using makefile to compile .c file(s)
+4. Run the example command to analyze speedup
+5. An output file output.txt will be generated containing a summary of all runs
+Note: To reset output file, delete from directory.
 
 ```
-cd HPC_PI_Approx  
+cd HPC_PI_Approx
+module load gcc mvapich2/2.2
 make
-make run p=2 n=5000000 r=2
+for p in 1 2 4 8 16; do make run p=$p n=5000000 r=100; done
 
-// Output:
-N=500000, R=2, P=2, PI=X.XXXXXX
+// output.txt will contain:
+N=500000, R=2, P=1, PI=X.XXXXXX
+Time=XXX.XXXXXX
+...
+N=500000, R=2, P=16, PI=X.XXXXXX
 Time=XXX.XXXXXX
 
+
 ```
 
-The example command is equivalent
+The following commands are equivalent to the above
 ```
-mpirun -np 2 ./prog1 5000000 2
+cd HPC_PI_Approx
+module load gcc mvapich2/2.2
+mpicxx -o prog1 prog1.c
+for p in 1 2 4 8 16; do mpirun -np $p ./prog1 5000000 100; done
 ```

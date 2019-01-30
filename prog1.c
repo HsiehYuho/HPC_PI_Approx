@@ -16,6 +16,9 @@ int dboard(int n);
 // Gen random number between 0 and 1
 double gen_random(void);
 
+// Append data to output file
+void write_data(int N, int R, int size, double approx_pi, double time);
+
 int main(int argc, char** argv) {
 
     // Parallel
@@ -96,7 +99,7 @@ int main(int argc, char** argv) {
 
     // Write output to file
     if(rank == 0) {
-    	printf("N=%d, R=%d, P=%d, PI=%lf\nTime=%lf\n", N, R, size, approx_pi, end-start);
+    	write_data(N, R, size, approx_pi, end-start);
     }
 
     return 0;
@@ -124,4 +127,16 @@ int dboard(int n){
 
 double gen_random(){
     return (double) rand()/ ((double)RAND_MAX + 1); // +1 to exclude 1.0 edge case (on circumf of circle)
+}
+
+void write_data(int N, int R, int size, double approx_pi, double time) {
+	const char* fname = "output.txt";
+
+	FILE *f = fopen(fname, "a");
+	if (f == NULL) { // File not yet created
+		f = fopen(fname, "w");
+	}
+	fprintf(f, "N=%d, R=%d, P=%d, PI=%lf\nTime=%lf\n", N, R, size, approx_pi, time);
+	fclose(f);
+	return;
 }
