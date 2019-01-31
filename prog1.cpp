@@ -29,9 +29,9 @@ int main(int argc, char** argv) {
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
     int N = 0, R = 0;       // N is the number of darts simulated per round, R is number of round
-    int collective_m = 0;   // Used by master, to collect sum of m from other processors each iteration
-    int global_m = 0;       // Sum of all collective m
-    double approx_pi = 0;   // Target value 
+    int collective_m = 0;   // Used by master, to collect sum of m from other processors each iteration, won't exceed max_int as long as N < max_int
+    long global_m = 0;       // Sum of all collective m, exceeds max_int if R=100 and N exceeds ~3.37e7 so must use long
+    double approx_pi = 0;   // Target value
 
     // Rand seed
     srand(time(NULL) + rank);
@@ -88,7 +88,7 @@ int main(int argc, char** argv) {
 
     // Compute PI 
     if(rank == 0){
-        double avg_m = (double)global_m / R; 
+        double avg_m = (double)global_m / R;
         approx_pi = 2.0 * N / avg_m;		
     }
 

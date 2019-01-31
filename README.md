@@ -14,7 +14,7 @@ MPI
 1. Git clone the repo.
 2. Load mvapich
 Note: please install MPI beforehand.
-3. Using makefile to compile .c file(s)
+3. Compile
 4. Run the example command to analyze speedup
 5. An output file output.txt will be generated containing a summary of all runs
 Note: To reset output file, delete from directory.
@@ -22,8 +22,8 @@ Note: To reset output file, delete from directory.
 ```
 cd HPC_PI_Approx
 module load gcc mvapich2/2.2
-make
-for p in 1 2 4 8 16; do make run p=$p n=5000000 r=100; done
+mpicxx -o prog1 prog1.cpp
+for p in 1 2 4 8 16; do mpirun -np $p ./prog1 5000000 100; done
 
 // output.txt will contain:
 N=500000, R=2, P=1, PI=X.XXXXXX
@@ -33,12 +33,4 @@ N=500000, R=2, P=16, PI=X.XXXXXX
 Time=XXX.XXXXXX
 
 
-```
-
-The following commands are equivalent to the above
-```
-cd HPC_PI_Approx
-module load gcc mvapich2/2.2
-mpicxx -o prog1 prog1.c
-for p in 1 2 4 8 16; do mpirun -np $p ./prog1 5000000 100; done
 ```
